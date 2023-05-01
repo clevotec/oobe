@@ -6,7 +6,7 @@ Set-BoxstarterTaskbarOptions -DisableSearchBox
 
 choco install -y 7zip
 choco install -y googlechrome
-choco install -y microsoft-office-deployment --params '/64bit /Product:ProPlus2021Volume'
+choco install -y --force microsoft-office-deployment --params '/64bit /Product:ProPlus2021Volume'
 choco install -y brave
 choco install -y adobereader
 choco install -y microsoft-edge
