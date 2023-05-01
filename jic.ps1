@@ -1,20 +1,20 @@
 # Boxstarter Winconfig
 Disable-BingSearch
 Disable-GameBarTips
-Set-ExplorerOptions -showFileExtensions -showHiddenFilesAndFolders
-# Set-BoxstarterTaskbarOptions -DisableSearchBox
+Set-ExplorerOptions -hideFileExtensions -hideHiddenFilesAndFolders
+Set-BoxstarterTaskbarOptions -DisableSearchBox
 
-choco install 7zip
-choco install googlechrome
-choco install microsoft-office-deployment --params '/64bit /Product:ProPlus2021Volume'
-choco install brave
-choco install adobereader
-choco install microsoft-edge
-choco install keepass
-choco install keepass-rpc
-choco install vlc
-choco install choco-upgrade-all-at --params '/DAILY:yes /TIME:04:00 /ABORTTIME:08:00'
-choco install micrsoft-teams.install
+choco install -y 7zip
+choco install -y googlechrome
+choco install -y microsoft-office-deployment --params '/64bit /Product:ProPlus2021Volume'
+choco install -y brave
+choco install -y adobereader
+choco install -y microsoft-edge
+choco install -y keepass
+choco install -y keepass-rpc
+choco install -y vlc
+choco install -y choco-upgrade-all-at --params '/DAILY:yes /TIME:04:00 /ABORTTIME:08:00'
+choco install -y micrsoft-teams.install
 
 # Onedrive Setup
 $HKLMregistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\OneDrive' ##Path to HKLM keys
