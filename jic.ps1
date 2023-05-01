@@ -6,6 +6,7 @@ Set-BoxstarterTaskbarOptions -DisableSearchBox
 
 choco install -y 7zip
 choco install -y googlechrome
+choco install -y microsoft-teams.install
 choco install -y --force microsoft-office-deployment --params '/64bit /Product:ProPlus2021Volume'
 choco install -y brave
 choco install -y adobereader
@@ -14,7 +15,7 @@ choco install -y keepass
 choco install -y keepass-rpc
 choco install -y vlc
 choco install -y choco-upgrade-all-at --params '/DAILY:yes /TIME:04:00 /ABORTTIME:08:00'
-choco install -y micrsoft-teams.install
+
 
 # Onedrive Setup
 $HKLMregistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\OneDrive' ##Path to HKLM keys
