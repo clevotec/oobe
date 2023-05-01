@@ -7,7 +7,7 @@ Set-BoxstarterTaskbarOptions -DisableSearchBox
 choco install -y 7zip
 choco install -y googlechrome
 choco install -y microsoft-teams.install
-choco install -y --force microsoft-office-deployment --params '/64bit /Product:ProPlus2021Volume'
+choco install -y microsoft-office-deployment --params '/64bit /Product:ProPlus2021Volume'
 choco install -y brave
 choco install -y adobereader
 choco install -y microsoft-edge
@@ -26,8 +26,8 @@ if(!(Test-Path $HKLMregistryPath)){New-Item -Path $HKLMregistryPath -Force}
 New-ItemProperty -Path $HKLMregistryPath -Name 'SilentAccountConfig' -Value '1' -PropertyType DWORD -Force | Out-Null ##Enable silent account configuration
 New-ItemProperty -Path $HKLMregistryPath -Name 'DisablePersonalSync' -Value '1' -PropertyType DWORD -Force | Out-Null ##Disable personal OneDrive
 New-ItemProperty -Path $HKLMregistryPath -Name 'FilesonDemandEnabled' -Value '1' -PropertyType DWORD -Force | Out-Null ##Enable Files on Demand
-New-ItemProperty -Path $HKLMregistryPath -Name 'KFMSilentOptInWithNotification' -Value $TenantGUID -PropertyType String -Force | Out-Null ##Enable KFM with notification
-
+New-ItemProperty -Path $HKLMregistryPath -Name 'KFMSilentOptIn' -Value $TenantGUID -PropertyType String -Force | Out-Null ##Enable KFM
+New-ItemProperty -Path $HKLMregistryPath -Name 'KFMSilentOptInWithNotification' -Value '1' -PropertyType DWORD -Force | Out-Null ##Enable KFM with notification
 
 # Windows Hello for Business
 $HKLMregistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\PassportForWork' ##Path to HKLM keys
