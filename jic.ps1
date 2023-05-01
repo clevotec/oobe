@@ -30,6 +30,7 @@ New-ItemProperty -Path $HKLMregistryPath -Name 'KFMSilentOptInWithNotification' 
 
 # Windows Hello for Business
 $HKLMregistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\PassportForWork' ##Path to HKLM keys
+if(!(Test-Path $HKLMregistryPath)){New-Item -Path $HKLMregistryPath -Force}
 New-ItemProperty -Path $HKLMregistryPath -Name 'Enabled' -Value '1' -PropertyType DWORD -Force | Out-Null ##Enable Windows Hello for Business
 New-ItemProperty -Path $HKLMregistryPath -Name 'DisablePostLogonProvisioning' -Value '1' -PropertyType DWORD -Force | Out-Null ##Disable post logon provisioning
 # New-ItemProperty -Path $HKLMregistryPath -Name 'RequirePinForSignIn' -Value '1' -PropertyType DWORD -Force | Out-Null ##Require PIN for sign in
