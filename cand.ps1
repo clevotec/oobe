@@ -12,7 +12,7 @@ choco install brave
 choco install firefox
 choco install micrsoft-teams.install
 choco install microsoft-edge
-choco install microsoft-office-deployment --params '/64bit /Product:ProPlus2021Volume'
+choco install microsoft-office-deployment --params '/64bit /Product:O365BusinessRetail'
 choco install keepass
 choco install keepass-rpc
 choco install vlc
@@ -21,7 +21,9 @@ choco install gimp
 choco install inkscape
 choco install libreoffice-fresh
 choco install microsoft-windows-terminal
-choco install powertoys
+# choco install powertoys
+choco install obs-studio
+choco install tailscale
 choco install skype
 choco install tailscale
 choco install sumatrapdf.install
@@ -53,6 +55,19 @@ New-ItemProperty -Path $HKLMregistryPath -Name 'Enabled' -Value '1' -PropertyTyp
 
 # Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\SearchScopes" -Name "ShowSearchSuggestionsGlobal" -Value 1
 
+# Remove Personal Teams
+If ($null -eq (Get-AppxPackage -Name MicrosoftTeams -AllUsers)) {
+    Write-Output “Microsoft Teams Personal App not present”
+}
+Else {
+    Try {
+        Write-Output “Removing Microsoft Teams Personal App”
+        Get-AppxPackage -Name MicrosoftTeams -AllUsers | Remove-AppPackage -AllUsers
+    }
+    catch {
+        Write-Output “Error removing Microsoft Teams Personal App”
+    }
+}
 
 # Install Windows Updates
 Enable-MicrosoftUpdate

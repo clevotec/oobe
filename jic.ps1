@@ -42,6 +42,20 @@ New-ItemProperty -Path $HKLMregistryPath -Name 'DisablePostLogonProvisioning' -V
 
 # Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\SearchScopes" -Name "ShowSearchSuggestionsGlobal" -Value 1
 
+# Remove Personal Teams
+If ($null -eq (Get-AppxPackage -Name MicrosoftTeams -AllUsers)) {
+    Write-Output “Microsoft Teams Personal App not present”
+}
+Else {
+    Try {
+        Write-Output “Removing Microsoft Teams Personal App”
+        Get-AppxPackage -Name MicrosoftTeams -AllUsers | Remove-AppPackage -AllUsers
+    }
+    catch {
+        Write-Output “Error removing Microsoft Teams Personal App”
+    }
+}
+
 
 # Install Windows Updates
 Enable-MicrosoftUpdate
