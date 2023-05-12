@@ -54,4 +54,4 @@ New-ItemProperty -Path $HKLMregistryPath -Name 'Enabled' -Value '1' -PropertyTyp
 
 # Install Windows Updates
 Enable-MicrosoftUpdate
-Install-WindowsUpdate -AcceptEula
+Install-WindowsUpdate
