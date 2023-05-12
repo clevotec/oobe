@@ -10,7 +10,7 @@ choco feature enable -n=useRememberedArgumentsForUpgrades
 
 choco install 7zip
 choco install googlechrome brave firefox
-choco install micrsoft-teams.install
+choco install microsoft-teams.install
 choco install microsoft-edge
 choco install microsoft-office-deployment --version '16.0.16327.20214' --params '/64bit /Product:O365BusinessRetail'
 choco install keepass keepass-rpc
