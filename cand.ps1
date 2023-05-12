@@ -4,32 +4,26 @@ Disable-GameBarTips
 Set-ExplorerOptions -showFileExtensions
 Set-BoxstarterTaskbarOptions -DisableSearchBox
 
+Set-BoxstarterConfig -NugetSources "https://chocolatey.org/api/v2"
+
 choco feature enable -n=useRememberedArgumentsForUpgrades
 
 choco install 7zip
-choco install googlechrome
-choco install brave
-choco install firefox
+choco install googlechrome brave firefox
 choco install micrsoft-teams.install
 choco install microsoft-edge
-choco install microsoft-office-deployment --params '/64bit /Product:O365BusinessRetail'
-choco install keepass
-choco install keepass-rpc
-choco install vlc
-choco install ffmpeg
-choco install gimp
-choco install inkscape
+choco install microsoft-office-deployment --version '16.0.16327.20214' --params '/64bit /Product:O365BusinessRetail'
+choco install keepass keepass-rpc
+choco install vlc ffmpeg yt-dlp
+choco install gimp inkscape
 choco install libreoffice-fresh
 choco install microsoft-windows-terminal
 # choco install powertoys
 choco install obs-studio
 choco install tailscale
 choco install skype
-choco install tailscale
 choco install sumatrapdf.install
-choco install vscode
-choco install notepadplusplus
-choco install yt-dlp
+choco install vscode notepadplusplus
 choco install choco-upgrade-all-at --params '/DAILY:yes /TIME:04:00 /ABORTTIME:08:00'
 choco install chocolateygui choco-cleaner choco-upgrade-all-at-startup
 
@@ -48,6 +42,7 @@ New-ItemProperty -Path $HKLMregistryPath -Name 'KFMSilentOptInWithNotification' 
 
 # Windows Hello for Business
 $HKLMregistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\PassportForWork' ##Path to HKLM keys
+if(!(Test-Path $HKLMregistryPath)){New-Item -Path $HKLMregistryPath -Force}
 New-ItemProperty -Path $HKLMregistryPath -Name 'Enabled' -Value '1' -PropertyType DWORD -Force | Out-Null ##Enable Windows Hello for Business
 # New-ItemProperty -Path $HKLMregistryPath -Name 'DisablePostLogonProvisioning' -Value '1' -PropertyType DWORD -Force | Out-Null ##Disable post logon provisioning
 # New-ItemProperty -Path $HKLMregistryPath -Name 'RequirePinForSignIn' -Value '1' -PropertyType DWORD -Force | Out-Null ##Require PIN for sign in
@@ -55,19 +50,7 @@ New-ItemProperty -Path $HKLMregistryPath -Name 'Enabled' -Value '1' -PropertyTyp
 
 # Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\SearchScopes" -Name "ShowSearchSuggestionsGlobal" -Value 1
 
-# Remove Personal Teams
-If ($null -eq (Get-AppxPackage -Name MicrosoftTeams -AllUsers)) {
-    Write-Output “Microsoft Teams Personal App not present”
-}
-Else {
-    Try {
-        Write-Output “Removing Microsoft Teams Personal App”
-        Get-AppxPackage -Name MicrosoftTeams -AllUsers | Remove-AppPackage -AllUsers
-    }
-    catch {
-        Write-Output “Error removing Microsoft Teams Personal App”
-    }
-}
+
 
 # Install Windows Updates
 Enable-MicrosoftUpdate
