@@ -1,10 +1,9 @@
+## Boxstarter script https://boxstarter.org/package/url?https://raw.githubusercontent.com/clevotec/oobe/main/cand.ps1
 # Boxstarter Winconfig
 Disable-BingSearch
 Disable-GameBarTips
 Set-ExplorerOptions -showFileExtensions
 Set-BoxstarterTaskbarOptions -DisableSearchBox
-
-Set-BoxstarterConfig -NugetSources "https://chocolatey.org/api/v2"
 
 choco feature enable -n=useRememberedArgumentsForUpgrades
 
