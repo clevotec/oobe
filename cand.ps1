@@ -12,7 +12,7 @@ choco install googlechrome brave firefox
 choco install microsoft-teams.install
 choco install microsoft-edge
 choco install office365business --params '/updates /eula'
-choco install  --forcex86 
+choco install jabra-direct
 choco install keepass keepass-rpc
 choco install vlc ffmpeg yt-dlp
 choco install gimp inkscape
