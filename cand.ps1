@@ -11,13 +11,13 @@ choco install 7zip
 choco install googlechrome brave firefox
 choco install microsoft-teams.install
 choco install microsoft-edge
-choco install microsoft-office-deployment --version '16.0.16327.20214' --params '/64bit /Product:O365BusinessRetail'
+choco install office365business --params '/updates /eula'
+choco install  --forcex86 
 choco install keepass keepass-rpc
 choco install vlc ffmpeg yt-dlp
 choco install gimp inkscape
 choco install libreoffice-fresh
 choco install microsoft-windows-terminal
-# choco install powertoys
 choco install obs-studio
 choco install tailscale
 choco install skype
