@@ -21,7 +21,7 @@ choco install microsoft-windows-terminal
 choco install obs-studio
 choco install tailscale
 choco install skype
-choco install sumatrapdf.install
+choco install foxitreader
 choco install vscode notepadplusplus
 choco install choco-upgrade-all-at --params '/DAILY:yes /TIME:04:00 /ABORTTIME:08:00'
 choco install chocolateygui choco-cleaner choco-upgrade-all-at-startup

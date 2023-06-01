@@ -33,7 +33,7 @@ choco install obsidian
 choco install powertoys
 choco install skype
 choco install scrcpy
-choco install sumatrapdf.install
+choco install foxitreader
 choco install synctrayzor
 choco install sysinternals
 choco install tailscale

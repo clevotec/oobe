@@ -11,6 +11,7 @@ choco install brave
 choco install microsoft-teams.install
 choco install microsoft-office-deployment --params '/64bit /Product:ProPlus2021Volume'
 choco install adobereader
+choco install foxitreader
 choco install microsoft-edge
 choco install keepass
 choco install keepass-rpc
