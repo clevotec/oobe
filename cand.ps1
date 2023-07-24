@@ -23,6 +23,7 @@ choco install tailscale
 choco install skype
 choco install foxitreader
 choco install vscode notepadplusplus
+choco install notepadreplacer --params='"/NOTEPAD:C:\Program Files\Notepad++\notepad++.exe"'
 choco install choco-upgrade-all-at --params '/DAILY:yes /TIME:04:00 /ABORTTIME:08:00'
 choco install chocolateygui choco-cleaner choco-upgrade-all-at-startup
 
