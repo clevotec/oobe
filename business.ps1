@@ -2,13 +2,13 @@
 
 <#
 .SYNOPSIS
-    OOBE Setup Script - JIC (Business/Office Edition)
+    OOBE Setup Script - Business Edition
 .DESCRIPTION
     Modernized OOBE setup script using winget for package management.
     Configures Windows and installs business productivity applications.
 #>
 
-Write-Host "=== JIC OOBE Setup Script ===" -ForegroundColor Cyan
+Write-Host "=== Business OOBE Setup Script ===" -ForegroundColor Cyan
 Write-Host "Modernized with winget package management" -ForegroundColor Green
 Write-Host ""
 

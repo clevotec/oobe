@@ -2,16 +2,13 @@
 
 <#
 .SYNOPSIS
-    OOBE Setup Script - CAND (Standard Office Edition)
+    OOBE Setup Script - Developer Edition
 .DESCRIPTION
     Modernized OOBE setup script using winget for package management.
-    Configures Windows and installs standard office and creative applications.
-.NOTES
-    Boxstarter URL (legacy): https://boxstarter.org/package/url?https://raw.githubusercontent.com/clevotec/oobe/main/cand.ps1
-    Now uses native PowerShell and winget for modern package management.
+    Configures Windows and installs developer tools and applications.
 #>
 
-Write-Host "=== CAND OOBE Setup Script ===" -ForegroundColor Cyan
+Write-Host "=== Developer OOBE Setup Script ===" -ForegroundColor Cyan
 Write-Host "Modernized with winget package management" -ForegroundColor Green
 Write-Host ""
 
@@ -65,8 +62,16 @@ Set-RegistryValue -Path "HKCU:\Software\Microsoft\GameBar" -Name "ShowStartupPan
 # Show File Extensions
 Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0
 
+# Show Hidden Files and Folders
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Value 1
+
 # Disable Search Box on Taskbar (use icon only)
 Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Value 1
+
+# Enable Remote Desktop
+Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+Write-Host "  ✓ Remote Desktop enabled" -ForegroundColor Green
 
 Write-Host "  ✓ Windows configuration complete" -ForegroundColor Green
 
@@ -96,94 +101,122 @@ Write-Host "`n=== Installing Packages ===" -ForegroundColor Cyan
 
 # Utilities
 Install-WingetPackage -PackageId "7zip.7zip" -Name "7-Zip"
+Install-WingetPackage -PackageId "Google.PlatformTools" -Name "Android Debug Bridge (ADB)"
+Install-WingetPackage -PackageId "Git.Git" -Name "Git"
+Install-WingetPackage -PackageId "Microsoft.Sysinternals.Suite" -Name "Sysinternals Suite"
+Install-WingetPackage -PackageId "WinSCP.WinSCP" -Name "WinSCP"
+Install-WingetPackage -PackageId "Microsoft.PowerToys" -Name "PowerToys"
 
 # Browsers
-Install-WingetPackage -PackageId "Google.Chrome" -Name "Google Chrome"
 Install-WingetPackage -PackageId "Brave.Brave" -Name "Brave Browser"
 Install-WingetPackage -PackageId "Mozilla.Firefox" -Name "Firefox"
+Install-WingetPackage -PackageId "Google.Chrome" -Name "Google Chrome"
 Install-WingetPackage -PackageId "Microsoft.Edge" -Name "Microsoft Edge"
 
-# Communication
-Install-WingetPackage -PackageId "Microsoft.Teams" -Name "Microsoft Teams"
-Install-WingetPackage -PackageId "Microsoft.Skype" -Name "Skype"
-
-# Office & Productivity
-Install-WingetPackage -PackageId "Microsoft.Office" -Name "Microsoft Office 365 Business"
-Install-WingetPackage -PackageId "Foxit.FoxitReader" -Name "Foxit PDF Reader"
-Install-WingetPackage -PackageId "TheDocumentFoundation.LibreOffice" -Name "LibreOffice"
-
-# Hardware Support
-Install-WingetPackage -PackageId "Jabra.Direct" -Name "Jabra Direct"
-
-# Security
-Install-WingetPackage -PackageId "KeePassXCTeam.KeePassXC" -Name "KeePassXC"
-
-# Media Tools
-Install-WingetPackage -PackageId "VideoLAN.VLC" -Name "VLC Media Player"
-Install-WingetPackage -PackageId "Gyan.FFmpeg" -Name "FFmpeg"
-Install-WingetPackage -PackageId "yt-dlp.yt-dlp" -Name "yt-dlp"
-Install-WingetPackage -PackageId "OBSProject.OBSStudio" -Name "OBS Studio"
+# Development Tools
+Install-WingetPackage -PackageId "Microsoft.VisualStudioCode" -Name "Visual Studio Code"
+Install-WingetPackage -PackageId "Notepad++.Notepad++" -Name "Notepad++"
+Install-WingetPackage -PackageId "TortoiseGit.TortoiseGit" -Name "TortoiseGit"
+Install-WingetPackage -PackageId "Genymobile.scrcpy" -Name "scrcpy"
+Install-WingetPackage -PackageId "Microsoft.WindowsTerminal" -Name "Windows Terminal"
 
 # Creative Tools
 Install-WingetPackage -PackageId "GIMP.GIMP" -Name "GIMP"
 Install-WingetPackage -PackageId "Inkscape.Inkscape" -Name "Inkscape"
+Install-WingetPackage -PackageId "Obsidian.Obsidian" -Name "Obsidian"
 
-# Development Tools
-Install-WingetPackage -PackageId "Microsoft.WindowsTerminal" -Name "Windows Terminal"
-Install-WingetPackage -PackageId "Microsoft.VisualStudioCode" -Name "Visual Studio Code"
-Install-WingetPackage -PackageId "Notepad++.Notepad++" -Name "Notepad++"
+# Media Tools
+Install-WingetPackage -PackageId "Gyan.FFmpeg" -Name "FFmpeg"
+Install-WingetPackage -PackageId "yt-dlp.yt-dlp" -Name "yt-dlp"
+Install-WingetPackage -PackageId "VideoLAN.VLC" -Name "VLC Media Player"
+Install-WingetPackage -PackageId "9NBLGGH6X7MR" -Name "Tidal" -Source "msstore"
 
-# Networking
+# Communication
+Install-WingetPackage -PackageId "Microsoft.Skype" -Name "Skype"
+Install-WingetPackage -PackageId "Telegram.TelegramDesktop" -Name "Telegram"
+Install-WingetPackage -PackageId "Mozilla.Thunderbird" -Name "Thunderbird"
+Install-WingetPackage -PackageId "Microsoft.Teams" -Name "Microsoft Teams"
+
+# Security & Sync
+Install-WingetPackage -PackageId "KeePassXCTeam.KeePassXC" -Name "KeePassXC"
+Install-WingetPackage -PackageId "SyncTrayzor.SyncTrayzor" -Name "SyncTrayzor"
 Install-WingetPackage -PackageId "tailscale.tailscale" -Name "Tailscale"
+
+# Office & Productivity
+Install-WingetPackage -PackageId "TheDocumentFoundation.LibreOffice" -Name "LibreOffice"
+Install-WingetPackage -PackageId "Microsoft.Office" -Name "Microsoft Office"
+Install-WingetPackage -PackageId "Foxit.FoxitReader" -Name "Foxit PDF Reader"
 
 Write-Host "`n  ✓ Package installation complete" -ForegroundColor Green
 
 #endregion
 
-#region OneDrive Configuration
+#region Windows Features
 
-Write-Host "`n=== Configuring OneDrive for Business ===" -ForegroundColor Cyan
+Write-Host "`n=== Installing Windows Features ===" -ForegroundColor Cyan
 
-$HKLMregistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\OneDrive'
-$TenantGUID = '3db75043-219a-4c39-90e2-88cd1838fca4'
-
-if (!(Test-Path $HKLMregistryPath)) {
-    New-Item -Path $HKLMregistryPath -Force | Out-Null
+# Install Hyper-V
+$hypervState = (Get-WindowsOptionalFeature -FeatureName "Microsoft-Hyper-V-All" -Online)
+if ($hypervState.State -eq 'Enabled') {
+    Write-Host "  ✓ Hyper-V already installed" -ForegroundColor Green
+}
+else {
+    Write-Host "Installing Hyper-V..." -ForegroundColor Yellow
+    try {
+        Enable-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V-All" -NoRestart -All
+        Write-Host "  ✓ Hyper-V installed" -ForegroundColor Green
+    }
+    catch {
+        Write-Warning "  ✗ Failed to install Hyper-V (requires Windows 10/11 Pro/Enterprise)"
+    }
 }
 
-Set-RegistryValue -Path $HKLMregistryPath -Name 'SilentAccountConfig' -Value 1 -Type "DWORD"
-Set-RegistryValue -Path $HKLMregistryPath -Name 'DisablePersonalSync' -Value 1 -Type "DWORD"
-Set-RegistryValue -Path $HKLMregistryPath -Name 'FilesOnDemandEnabled' -Value 1 -Type "DWORD"
-Set-RegistryValue -Path $HKLMregistryPath -Name 'KFMSilentOptIn' -Value $TenantGUID -Type "String"
-Set-RegistryValue -Path $HKLMregistryPath -Name 'KFMSilentOptInWithNotification' -Value 1 -Type "DWORD"
-
-Write-Host "  ✓ OneDrive configured for business use" -ForegroundColor Green
-Write-Host "    - Silent account configuration enabled" -ForegroundColor Gray
-Write-Host "    - Personal OneDrive disabled" -ForegroundColor Gray
-Write-Host "    - Files on Demand enabled" -ForegroundColor Gray
-Write-Host "    - Known Folder Move (KFM) enabled" -ForegroundColor Gray
-
-#endregion
-
-#region Windows Hello for Business
-
-Write-Host "`n=== Configuring Windows Hello for Business ===" -ForegroundColor Cyan
-
-$HKLMregistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\PassportForWork'
-
-if (!(Test-Path $HKLMregistryPath)) {
-    New-Item -Path $HKLMregistryPath -Force | Out-Null
+# Install Windows Sandbox
+$sandboxState = (Get-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -Online)
+if ($sandboxState.State -eq 'Enabled') {
+    Write-Host "  ✓ Windows Sandbox already installed" -ForegroundColor Green
+}
+else {
+    Write-Host "Installing Windows Sandbox..." -ForegroundColor Yellow
+    try {
+        Enable-WindowsOptionalFeature -Online -FeatureName "Containers-DisposableClientVM" -NoRestart -All
+        Write-Host "  ✓ Windows Sandbox installed" -ForegroundColor Green
+    }
+    catch {
+        Write-Warning "  ✗ Failed to install Windows Sandbox (requires Windows 10/11 Pro/Enterprise)"
+    }
 }
 
-Set-RegistryValue -Path $HKLMregistryPath -Name 'Enabled' -Value 1 -Type "DWORD"
-
-Write-Host "  ✓ Windows Hello for Business enabled" -ForegroundColor Green
+# Install WSL
+$wslState = (Get-WindowsOptionalFeature -FeatureName "Microsoft-Windows-Subsystem-Linux" -Online)
+if ($wslState.State -eq 'Enabled') {
+    Write-Host "  ✓ WSL already installed" -ForegroundColor Green
+}
+else {
+    Write-Host "Installing WSL..." -ForegroundColor Yellow
+    try {
+        wsl --install -d Ubuntu --no-launch
+        Write-Host "  ✓ WSL with Ubuntu installed" -ForegroundColor Green
+    }
+    catch {
+        Write-Warning "  ✗ Failed to install WSL"
+    }
+}
 
 #endregion
 
 #region Post-Installation Configuration
 
 Write-Host "`n=== Post-Installation Configuration ===" -ForegroundColor Cyan
+
+# Pin Firefox to Taskbar
+$firefoxPath = "${env:ProgramFiles}\Mozilla Firefox\firefox.exe"
+if (Test-Path $firefoxPath) {
+    Write-Host "Pinning Firefox to taskbar..." -ForegroundColor Yellow
+    # Note: Taskbar pinning via script is restricted in modern Windows
+    # Users will need to pin manually or use Group Policy
+    Write-Host "  ⓘ Please pin Firefox to taskbar manually" -ForegroundColor Gray
+}
 
 # Replace Notepad with Notepad++
 $notepadPPPath = "${env:ProgramFiles}\Notepad++\notepad++.exe"
