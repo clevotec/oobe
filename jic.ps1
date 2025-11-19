@@ -111,16 +111,12 @@ Install-WingetPackage -PackageId "Adobe.Acrobat.Reader.64-bit" -Name "Adobe Acro
 Install-WingetPackage -PackageId "Foxit.FoxitReader" -Name "Foxit PDF Reader"
 
 # Security
-Install-WingetPackage -PackageId "DominikReichl.KeePass" -Name "KeePass"
+Install-WingetPackage -PackageId "KeePassXCTeam.KeePassXC" -Name "KeePassXC"
 
 # Media
 Install-WingetPackage -PackageId "VideoLAN.VLC" -Name "VLC Media Player"
 
 Write-Host "`n  ✓ Package installation complete" -ForegroundColor Green
-
-# Note: KeePass plugins (keepass-rpc) need to be installed manually
-Write-Host "`nNote: KeePass plugins need to be installed manually:" -ForegroundColor Yellow
-Write-Host "  - KeePassRPC: https://github.com/kee-org/keepassrpc/releases" -ForegroundColor Gray
 
 #endregion
 

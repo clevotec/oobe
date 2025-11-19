@@ -116,7 +116,7 @@ Install-WingetPackage -PackageId "TheDocumentFoundation.LibreOffice" -Name "Libr
 Install-WingetPackage -PackageId "Jabra.Direct" -Name "Jabra Direct"
 
 # Security
-Install-WingetPackage -PackageId "DominikReichl.KeePass" -Name "KeePass"
+Install-WingetPackage -PackageId "KeePassXCTeam.KeePassXC" -Name "KeePassXC"
 
 # Media Tools
 Install-WingetPackage -PackageId "VideoLAN.VLC" -Name "VLC Media Player"
@@ -137,10 +137,6 @@ Install-WingetPackage -PackageId "Notepad++.Notepad++" -Name "Notepad++"
 Install-WingetPackage -PackageId "tailscale.tailscale" -Name "Tailscale"
 
 Write-Host "`n  ✓ Package installation complete" -ForegroundColor Green
-
-# Note: KeePass plugins (keepass-rpc) need to be installed manually
-Write-Host "`nNote: KeePass plugins need to be installed manually:" -ForegroundColor Yellow
-Write-Host "  - KeePassRPC: https://github.com/kee-org/keepassrpc/releases" -ForegroundColor Gray
 
 #endregion
 

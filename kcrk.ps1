@@ -138,7 +138,7 @@ Install-WingetPackage -PackageId "Mozilla.Thunderbird" -Name "Thunderbird"
 Install-WingetPackage -PackageId "Microsoft.Teams" -Name "Microsoft Teams"
 
 # Security & Sync
-Install-WingetPackage -PackageId "DominikReichl.KeePass" -Name "KeePass"
+Install-WingetPackage -PackageId "KeePassXCTeam.KeePassXC" -Name "KeePassXC"
 Install-WingetPackage -PackageId "SyncTrayzor.SyncTrayzor" -Name "SyncTrayzor"
 Install-WingetPackage -PackageId "tailscale.tailscale" -Name "Tailscale"
 
@@ -148,12 +148,6 @@ Install-WingetPackage -PackageId "Microsoft.Office" -Name "Microsoft Office"
 Install-WingetPackage -PackageId "Foxit.FoxitReader" -Name "Foxit PDF Reader"
 
 Write-Host "`n  ✓ Package installation complete" -ForegroundColor Green
-
-# Note: KeePass plugins (keepass-rpc, keepass-plugin-keetraytotp) need to be installed manually
-# Download from: https://keepass.info/plugins.html
-Write-Host "`nNote: KeePass plugins need to be installed manually:" -ForegroundColor Yellow
-Write-Host "  - KeePassRPC: https://github.com/kee-org/keepassrpc/releases" -ForegroundColor Gray
-Write-Host "  - KeeOTP: https://github.com/tiuub/KeeOTPMirror/releases" -ForegroundColor Gray
 
 #endregion
 
