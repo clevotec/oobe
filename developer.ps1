@@ -68,6 +68,19 @@ Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explore
 # Disable Search Box on Taskbar (use icon only)
 Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Value 1
 
+# Enable Dark Theme
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Value 0
+Write-Host "  ✓ Dark theme enabled" -ForegroundColor Green
+
+# Enable Windows Spotlight for Desktop Background
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers" -Name "BackgroundType" -Value 2
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "EnableTransparency" -Value 1
+# Enable Windows Spotlight on lock screen
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenEnabled" -Value 1
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenOverlayEnabled" -Value 1
+Write-Host "  ✓ Windows Spotlight enabled for desktop and lock screen" -ForegroundColor Green
+
 # Enable Remote Desktop
 Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0
 Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
@@ -225,6 +238,24 @@ if (Test-Path $notepadPPPath) {
     Set-RegistryValue -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\notepad.exe" -Name "Debugger" -Value "`"$notepadPPPath`" -notepadStyleCmdline -z" -Type "String"
     Write-Host "  ✓ Notepad++ configured as default" -ForegroundColor Green
 }
+
+# Configure KeePassXC Browser Extensions
+Write-Host "Configuring KeePassXC browser extensions..." -ForegroundColor Yellow
+# KeePassXC Browser Extension IDs
+$chromeExtId = "oboonakemofpalcgghocfoadofidjkkk"  # Chrome/Edge/Brave
+$firefoxExtId = "{ff27e49b-4e79-4e00-8bea-92c2c00f4d7f}"
+
+# Install extension for Chrome
+Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\ExtensionInstallForcelist" -Name "1" -Value "$chromeExtId;https://clients2.google.com/service/update2/crx" -Type "String"
+
+# Install extension for Edge
+Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist" -Name "1" -Value "$chromeExtId;https://clients2.google.com/service/update2/crx" -Type "String"
+
+# Install extension for Brave (uses Chrome Web Store)
+Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave\ExtensionInstallForcelist" -Name "1" -Value "$chromeExtId;https://clients2.google.com/service/update2/crx" -Type "String"
+
+Write-Host "  ✓ KeePassXC browser extensions configured for Chrome, Edge, and Brave" -ForegroundColor Green
+Write-Host "  ⓘ For Firefox: Install manually from https://addons.mozilla.org/firefox/addon/keepassxc-browser/" -ForegroundColor Gray
 
 # Remove Personal Teams App (conflicts with Teams for Work)
 if ($null -eq (Get-AppxPackage -Name "MicrosoftTeams" -AllUsers)) {

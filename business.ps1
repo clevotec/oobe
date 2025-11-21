@@ -68,6 +68,19 @@ Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explore
 # Disable Search Box on Taskbar (use icon only)
 Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Value 1
 
+# Enable Dark Theme
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Value 0
+Write-Host "  ✓ Dark theme enabled" -ForegroundColor Green
+
+# Enable Windows Spotlight for Desktop Background
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers" -Name "BackgroundType" -Value 2
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "EnableTransparency" -Value 1
+# Enable Windows Spotlight on lock screen
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenEnabled" -Value 1
+Set-RegistryValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenOverlayEnabled" -Value 1
+Write-Host "  ✓ Windows Spotlight enabled for desktop and lock screen" -ForegroundColor Green
+
 Write-Host "  ✓ Windows configuration complete" -ForegroundColor Green
 
 #endregion
@@ -165,6 +178,19 @@ Write-Host "  ✓ Windows Hello for Business enabled" -ForegroundColor Green
 #region Post-Installation Configuration
 
 Write-Host "`n=== Post-Installation Configuration ===" -ForegroundColor Cyan
+
+# Configure KeePassXC Browser Extensions
+Write-Host "Configuring KeePassXC browser extensions..." -ForegroundColor Yellow
+# KeePassXC Browser Extension IDs
+$chromeExtId = "oboonakemofpalcgghocfoadofidjkkk"  # Chrome/Edge/Brave
+
+# Install extension for Edge
+Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist" -Name "1" -Value "$chromeExtId;https://clients2.google.com/service/update2/crx" -Type "String"
+
+# Install extension for Brave (uses Chrome Web Store)
+Set-RegistryValue -Path "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave\ExtensionInstallForcelist" -Name "1" -Value "$chromeExtId;https://clients2.google.com/service/update2/crx" -Type "String"
+
+Write-Host "  ✓ KeePassXC browser extensions configured for Edge and Brave" -ForegroundColor Green
 
 # Remove Personal Teams App (conflicts with Teams for Work)
 if ($null -eq (Get-AppxPackage -Name "MicrosoftTeams" -AllUsers)) {
