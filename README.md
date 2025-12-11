@@ -1,10 +1,18 @@
 # Windows OOBE Setup Scripts
 
-Automated Windows Out-of-Box Experience (OOBE) setup scripts using modern `winget` package management. These scripts configure Windows settings and install applications for different use cases.
+Automated Windows Out-of-Box Experience (OOBE) setup scripts using **UniGetUI** and `winget` package management. These scripts configure Windows settings and install applications for different use cases.
 
 ## Overview
 
-These PowerShell scripts automate the initial setup of Windows workstations with preconfigured packages and settings. All scripts use **winget** (Windows Package Manager) for reliable, modern package management.
+These PowerShell scripts automate the initial setup of Windows workstations with preconfigured packages and settings. By default, scripts install **UniGetUI** (formerly WingetUI) first, then load a package bundle for visual package management. A traditional winget-only mode is also available.
+
+### Installation Modes
+
+| Mode | Description | Usage |
+|------|-------------|-------|
+| **UniGetUI (Default)** | Installs UniGetUI and opens package bundle for GUI-based installation | `.\script.ps1` |
+| **Direct Install** | Traditional winget installation without UniGetUI | `.\script.ps1 -DirectInstall` |
+| **Bundle Only** | Opens bundle in UniGetUI, skips Windows config | `.\script.ps1 -BundleOnly` |
 
 ## Requirements
 
@@ -40,7 +48,6 @@ These PowerShell scripts automate the initial setup of Windows workstations with
 | | Mozilla Firefox | `Mozilla.Firefox` |
 | | Microsoft Edge | `Microsoft.Edge` |
 | **Communication** | Microsoft Teams | `Microsoft.Teams` |
-| | Skype | `Microsoft.Skype` |
 | **Office & Productivity** | Microsoft Office 365 Business | `Microsoft.Office` |
 | | Foxit PDF Reader | `Foxit.FoxitReader` |
 | | LibreOffice | `TheDocumentFoundation.LibreOffice` |
@@ -175,8 +182,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 | | yt-dlp | `yt-dlp.yt-dlp` |
 | | VLC Media Player | `VideoLAN.VLC` |
 | | Tidal | `9NBLGGH6X7MR` (Microsoft Store) |
-| **Communication** | Skype | `Microsoft.Skype` |
-| | Telegram Desktop | `Telegram.TelegramDesktop` |
+| **Communication** | Telegram Desktop | `Telegram.TelegramDesktop` |
 | | Thunderbird | `Mozilla.Thunderbird` |
 | | Microsoft Teams | `Microsoft.Teams` |
 | **Security & Sync** | KeePassXC | `KeePassXCTeam.KeePassXC` |
@@ -382,13 +388,21 @@ These scripts replace the older Chocolatey-based versions with native winget sup
 - **Old:** N/A → **New:** `business.ps1`
 - **Old:** `kcrk.ps1` → **New:** `developer.ps1`
 
-### Why Winget?
+### Why Winget + UniGetUI?
 
+**Winget (Windows Package Manager):**
 - Native to Windows 10/11 (no third-party installation required)
 - Official Microsoft package manager
 - Better integration with Windows Update and Store
 - More reliable package sources
 - Improved security with signed packages
+
+**UniGetUI (formerly WingetUI):**
+- Graphical interface for winget, Chocolatey, Scoop, and more
+- Easy package bundle import/export
+- Visual package management and updates
+- Simplifies bulk installations
+- Open source: [github.com/marticliment/UniGetUI](https://github.com/marticliment/UniGetUI)
 
 ---
 
@@ -434,10 +448,22 @@ Maintained by clevotec
 
 | Script | Use Case | Package Count | Special Features |
 |--------|----------|---------------|------------------|
-| `standard.ps1` | Office & Creative Work | 19 packages | OneDrive KFM, Media Tools, Creative Suite |
+| `standard.ps1` | Office & Creative Work | 20 packages | OneDrive KFM, Media Tools, Creative Suite |
 | `business.ps1` | Business Productivity | 10 packages | Minimal, Business-focused, Quick Setup |
-| `developer.ps1` | Software Development | 34 packages | WSL, Hyper-V, Sandbox, Dev Tools |
+| `developer.ps1` | Software Development | 31 packages | WSL, Hyper-V, Sandbox, Dev Tools |
+
+## Package Bundles
+
+Pre-configured UniGetUI bundles are available in the `/bundles` directory:
+
+| Bundle | Description |
+|--------|-------------|
+| `bundles/developer.ubundle` | Developer edition package list |
+| `bundles/standard.ubundle` | Standard edition package list |
+| `bundles/business.ubundle` | Business edition package list |
+
+These `.ubundle` files can be imported directly into UniGetUI for manual package management.
 
 ---
 
-**Last Updated:** 2025-12-02
+**Last Updated:** 2025-12-11
