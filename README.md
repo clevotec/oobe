@@ -214,6 +214,64 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 
 ---
 
+### 4. Chocolatey Uninstaller (`uninstall-chocolatey.ps1`)
+
+**Purpose:** Safely removes Chocolatey package manager while preserving an inventory backup and warning about portable applications.
+
+**Target Users:** Users migrating from Chocolatey to winget, or those who want to cleanly remove Chocolatey from their system
+
+**Features:**
+- Creates a backup inventory of all installed Chocolatey packages to Desktop
+- Detects portable apps that live inside the Chocolatey folder and warns before deletion
+- Cleans up environment variables (PATH, ChocolateyInstall, etc.)
+- Removes Chocolatey from both User and System PATH using Registry (preserves %Variables%)
+- Stops Chocolatey Agent service if running
+- Interactive confirmation before deleting portable apps
+- Preserves MSI-installed software (Chrome, VS Code, etc.)
+
+**What It Does:**
+
+| Phase | Action | Description |
+|-------|--------|-------------|
+| **Phase 1** | Data Backup | Exports list of installed packages to `choco_inventory_YYYYMMDD.txt` on Desktop |
+| **Phase 2** | Portable Detection | Scans for .exe files inside Chocolatey's lib folder and warns about deletion |
+| **Phase 3** | Environment Cleanup | Removes Chocolatey paths from User/System PATH and deletes Chocolatey environment variables |
+| **Phase 4** | File Removal | Stops Chocolatey Agent and deletes the Chocolatey installation directory |
+
+**Environment Variables Removed:**
+- `ChocolateyInstall`
+- `ChocolateyToolsLocation`
+- `ChocolateyLastPathUpdate`
+
+**PowerShell Execution:**
+
+```powershell
+# Download and execute directly from GitHub
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/clevotec/oobe/main/uninstall-chocolatey.ps1'))
+```
+
+```powershell
+# Or download first, then execute locally
+Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/clevotec/oobe/main/uninstall-chocolatey.ps1' -OutFile "$env:TEMP\uninstall-chocolatey.ps1"
+Set-ExecutionPolicy Bypass -Scope Process -Force
+& "$env:TEMP\uninstall-chocolatey.ps1"
+```
+
+```powershell
+# If you have the repository cloned locally
+cd C:\path\to\oobe
+Set-ExecutionPolicy Bypass -Scope Process -Force
+.\uninstall-chocolatey.ps1
+```
+
+**Important Notes:**
+- Run as Administrator
+- The script will abort if you decline to proceed when portable apps are detected
+- If file deletion fails (files in use), reboot and manually delete the Chocolatey folder
+- Your backup inventory file will be saved even if uninstallation is aborted
+
+---
+
 ## Common Features (All Scripts)
 
 All scripts include the following configurations:
@@ -437,7 +495,8 @@ Maintained by clevotec
 | `standard.ps1` | Office & Creative Work | 19 packages | OneDrive KFM, Media Tools, Creative Suite |
 | `business.ps1` | Business Productivity | 10 packages | Minimal, Business-focused, Quick Setup |
 | `developer.ps1` | Software Development | 34 packages | WSL, Hyper-V, Sandbox, Dev Tools |
+| `uninstall-chocolatey.ps1` | Chocolatey Removal | N/A | Backup Inventory, Portable App Detection, Clean Uninstall |
 
 ---
 
-**Last Updated:** 2025-12-02
+**Last Updated:** 2025-12-18
