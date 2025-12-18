@@ -48,6 +48,34 @@ function Set-RegistryValue {
 
 #endregion
 
+#region Chocolatey Migration
+
+Write-Host "`n=== Checking for Chocolatey Installation ===" -ForegroundColor Cyan
+
+$chocoPath = $env:ChocolateyInstall
+if ($chocoPath -and (Test-Path $chocoPath)) {
+    Write-Host "  Chocolatey detected at '$chocoPath'" -ForegroundColor Yellow
+    Write-Host "  Running Chocolatey uninstaller to migrate to winget..." -ForegroundColor Yellow
+
+    try {
+        $uninstallScript = "$env:TEMP\uninstall-chocolatey.ps1"
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+        Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/clevotec/oobe/main/uninstall-chocolatey.ps1' -OutFile $uninstallScript
+        & $uninstallScript
+        Remove-Item -Path $uninstallScript -Force -ErrorAction SilentlyContinue
+        Write-Host "  ✓ Chocolatey migration complete" -ForegroundColor Green
+    }
+    catch {
+        Write-Warning "  ✗ Failed to run Chocolatey uninstaller: $_"
+        Write-Warning "  You may need to manually uninstall Chocolatey"
+    }
+}
+else {
+    Write-Host "  ✓ Chocolatey not installed (using winget)" -ForegroundColor Green
+}
+
+#endregion
+
 #region Windows Configuration
 
 Write-Host "`n=== Configuring Windows Settings ===" -ForegroundColor Cyan
