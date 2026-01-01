@@ -6,6 +6,8 @@ Automated Windows Out-of-Box Experience (OOBE) setup scripts using modern `winge
 
 These PowerShell scripts automate the initial setup of Windows workstations with preconfigured packages and settings. All scripts use **winget** (Windows Package Manager) for reliable, modern package management.
 
+**New in this version:** Interactive setup with custom package selection!
+
 ## Requirements
 
 - Windows 10 (1809+) or Windows 11
@@ -14,316 +16,303 @@ These PowerShell scripts automate the initial setup of Windows workstations with
 - Windows Package Manager (winget) - Pre-installed on Windows 11 and modern Windows 10 builds
 - Internet connection
 
-## Scripts
+## Quick Start
 
-### 1. Standard Edition (`standard.ps1`)
+### Interactive Setup (Recommended)
 
-**Purpose:** General office and creative workstation setup with business productivity tools.
+Run the interactive setup wizard to choose your profile and customize packages:
+
+```powershell
+# Download and run interactive setup
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+$tempDir = "$env:TEMP\oobe-setup"
+New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
+@('setup.ps1', 'common.ps1', 'packages.ps1') | ForEach-Object {
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/clevotec/oobe/main/$_" -OutFile "$tempDir\$_"
+}
+& "$tempDir\setup.ps1"
+```
+
+### Non-Interactive Setup
+
+Run a specific profile without prompts:
+
+```powershell
+# Developer profile (non-interactive)
+.\setup.ps1 -Profile Developer
+
+# Business profile, skip Windows Updates
+.\setup.ps1 -Profile Business -SkipWindowsUpdates
+
+# Standard profile, skip Chocolatey migration
+.\setup.ps1 -Profile Standard -SkipChocolateyMigration
+```
+
+---
+
+## Project Structure
+
+```
+oobe/
+├── setup.ps1              # Interactive wrapper with menu system
+├── common.ps1             # Shared helper functions
+├── packages.ps1           # Package definitions by category
+├── standard.ps1           # Standard edition (direct execution)
+├── business.ps1           # Business edition (direct execution)
+├── developer.ps1          # Developer edition (direct execution)
+└── uninstall-chocolatey.ps1  # Chocolatey uninstaller
+```
+
+### Module Files
+
+| File | Purpose |
+|------|---------|
+| `setup.ps1` | Main interactive installer with profile selection and custom package picking |
+| `common.ps1` | Shared functions for package installation, Windows configuration, registry manipulation |
+| `packages.ps1` | Centralized package definitions organized by category with profile mappings |
+
+---
+
+## Interactive Setup Features
+
+The `setup.ps1` script provides:
+
+1. **Profile Selection Menu**
+   - Standard: Office & creative workstation (19 packages)
+   - Business: Streamlined business productivity (10 packages)
+   - Developer: Full development environment (34 packages)
+   - Custom: Hand-pick individual packages
+
+2. **Custom Package Selection**
+   - Browse packages by category
+   - Toggle individual packages on/off
+   - Select all in category or all packages
+   - Visual selection state with [X] markers
+
+3. **Windows Features Selection** (Custom mode)
+   - Hyper-V
+   - Windows Sandbox
+   - WSL + Ubuntu
+
+4. **Installation Summary**
+   - Review all selections before installing
+   - Grouped display by category
+
+---
+
+## Profiles
+
+### 1. Standard Edition
+
+**Purpose:** General office and creative workstation setup
 
 **Target Users:** Office workers, content creators, general business users
 
-**Features:**
-- Configures Windows settings (dark theme, file extensions, Windows Spotlight)
-- Installs essential browsers, office suite, and communication tools
-- Sets up OneDrive for Business with Known Folder Move
-- Configures Windows Hello for Business
-- Installs creative and media tools
-- Sets up automatic updates via scheduled task
+**Packages Included:**
 
-**Software Installed via Winget:**
+| Category | Packages |
+|----------|----------|
+| **Utilities** | 7-Zip |
+| **Browsers** | Chrome, Brave, Firefox, Edge |
+| **Communication** | Teams, Skype |
+| **Office** | Microsoft Office, Foxit Reader, LibreOffice |
+| **Hardware** | Jabra Direct |
+| **Security** | KeePassXC, Tailscale |
+| **Media** | VLC, FFmpeg, yt-dlp, OBS Studio |
+| **Creative** | GIMP, Inkscape |
+| **Development** | Windows Terminal, VS Code, Notepad++ |
 
-| Category | Software | Winget Package ID |
-|----------|----------|-------------------|
-| **Utilities** | 7-Zip | `7zip.7zip` |
-| **Browsers** | Google Chrome | `Google.Chrome` |
-| | Brave Browser | `Brave.Brave` |
-| | Mozilla Firefox | `Mozilla.Firefox` |
-| | Microsoft Edge | `Microsoft.Edge` |
-| **Communication** | Microsoft Teams | `Microsoft.Teams` |
-| | Skype | `Microsoft.Skype` |
-| **Office & Productivity** | Microsoft Office 365 Business | `Microsoft.Office` |
-| | Foxit PDF Reader | `Foxit.FoxitReader` |
-| | LibreOffice | `TheDocumentFoundation.LibreOffice` |
-| **Hardware Support** | Jabra Direct | `Jabra.Direct` |
-| **Security** | KeePassXC | `KeePassXCTeam.KeePassXC` |
-| **Media Tools** | VLC Media Player | `VideoLAN.VLC` |
-| | FFmpeg | `Gyan.FFmpeg` |
-| | yt-dlp | `yt-dlp.yt-dlp` |
-| | OBS Studio | `OBSProject.OBSStudio` |
-| **Creative Tools** | GIMP | `GIMP.GIMP` |
-| | Inkscape | `Inkscape.Inkscape` |
-| **Development** | Windows Terminal | `Microsoft.WindowsTerminal` |
-| | Visual Studio Code | `Microsoft.VisualStudioCode` |
-| | Notepad++ | `Notepad++.Notepad++` |
-| **Networking** | Tailscale | `tailscale.tailscale` |
-
-**PowerShell Execution:**
-
+**Direct Execution:**
 ```powershell
-# Download and execute directly from GitHub
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/clevotec/oobe/main/standard.ps1'))
-```
-
-```powershell
-# Or download first, then execute locally
-Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/clevotec/oobe/main/standard.ps1' -OutFile "$env:TEMP\standard.ps1"
 Set-ExecutionPolicy Bypass -Scope Process -Force
-& "$env:TEMP\standard.ps1"
-```
-
-```powershell
-# If you have the repository cloned locally
-cd C:\path\to\oobe
-Set-ExecutionPolicy Bypass -Scope Process -Force
-.\standard.ps1
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+$tempDir = "$env:TEMP\oobe-setup"
+New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
+@('standard.ps1', 'common.ps1', 'packages.ps1') | ForEach-Object {
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/clevotec/oobe/main/$_" -OutFile "$tempDir\$_"
+}
+& "$tempDir\standard.ps1"
 ```
 
 ---
 
-### 2. Business Edition (`business.ps1`)
+### 2. Business Edition
 
-**Purpose:** Streamlined business workstation with essential productivity tools.
+**Purpose:** Streamlined business workstation with essential productivity tools
 
-**Target Users:** Business professionals, corporate employees, office administrators
+**Target Users:** Business professionals, corporate employees
 
-**Features:**
-- Minimal, focused software selection for business use
-- Hides file extensions and hidden files (business preference)
-- Configures OneDrive for Business with tenant-specific settings
-- Enables Windows Hello for Business with post-logon provisioning disabled
-- Auto-configures KeePassXC browser extensions for Edge and Brave
-- Sets up automatic daily updates at 4:00 AM
+**Packages Included:**
 
-**Software Installed via Winget:**
+| Category | Packages |
+|----------|----------|
+| **Utilities** | 7-Zip |
+| **Browsers** | Brave, Edge |
+| **Communication** | Teams, Zoom |
+| **Office** | Microsoft Office, Adobe Reader, Foxit Reader |
+| **Security** | KeePassXC |
+| **Media** | VLC |
 
-| Category | Software | Winget Package ID |
-|----------|----------|-------------------|
-| **Utilities** | 7-Zip | `7zip.7zip` |
-| **Browsers** | Brave Browser | `Brave.Brave` |
-| | Microsoft Edge | `Microsoft.Edge` |
-| **Communication** | Microsoft Teams | `Microsoft.Teams` |
-| | Zoom | `Zoom.Zoom` |
-| **Office & Productivity** | Microsoft Office | `Microsoft.Office` |
-| | Adobe Acrobat Reader | `Adobe.Acrobat.Reader.64-bit` |
-| | Foxit PDF Reader | `Foxit.FoxitReader` |
-| **Security** | KeePassXC | `KeePassXCTeam.KeePassXC` |
-| **Media** | VLC Media Player | `VideoLAN.VLC` |
-
-**PowerShell Execution:**
-
+**Direct Execution:**
 ```powershell
-# Download and execute directly from GitHub
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/clevotec/oobe/main/business.ps1'))
-```
-
-```powershell
-# Or download first, then execute locally
-Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/clevotec/oobe/main/business.ps1' -OutFile "$env:TEMP\business.ps1"
 Set-ExecutionPolicy Bypass -Scope Process -Force
-& "$env:TEMP\business.ps1"
-```
-
-```powershell
-# If you have the repository cloned locally
-cd C:\path\to\oobe
-Set-ExecutionPolicy Bypass -Scope Process -Force
-.\business.ps1
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+$tempDir = "$env:TEMP\oobe-setup"
+New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
+@('business.ps1', 'common.ps1', 'packages.ps1') | ForEach-Object {
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/clevotec/oobe/main/$_" -OutFile "$tempDir\$_"
+}
+& "$tempDir\business.ps1"
 ```
 
 ---
 
-### 3. Developer Edition (`developer.ps1`)
+### 3. Developer Edition
 
-**Purpose:** Comprehensive development workstation with full toolset for developers.
+**Purpose:** Comprehensive development workstation with full toolset
 
-**Target Users:** Software developers, system administrators, IT professionals, power users
+**Target Users:** Software developers, system administrators, IT professionals
 
-**Features:**
-- Shows file extensions and hidden files for development work
-- Enables Remote Desktop with firewall rules
-- Installs Windows Subsystem for Linux (WSL) with Ubuntu
-- Enables Hyper-V and Windows Sandbox (requires Pro/Enterprise)
-- Comprehensive development tools and utilities
-- Multiple browsers for cross-platform testing
-- Configures Notepad++ as default notepad replacement
-- Pins Firefox to taskbar (manual step required)
-- Auto-configures KeePassXC browser extensions for Chrome, Edge, and Brave
+**Packages Included:**
 
-**Software Installed via Winget:**
+| Category | Packages |
+|----------|----------|
+| **Utilities** | 7-Zip, ADB, Git, Sysinternals, WinSCP, PowerToys |
+| **Browsers** | Chrome, Brave, Firefox, Edge |
+| **Communication** | Teams, Skype, Telegram, Thunderbird |
+| **Office** | Microsoft Office, LibreOffice, Foxit Reader, Obsidian |
+| **Development** | Windows Terminal, VS Code, Notepad++, TortoiseGit, scrcpy |
+| **Creative** | GIMP, Inkscape |
+| **Security** | KeePassXC, SyncTrayzor, Tailscale |
+| **Media** | VLC, FFmpeg, yt-dlp, Tidal |
 
-| Category | Software | Winget Package ID |
-|----------|----------|-------------------|
-| **Utilities** | 7-Zip | `7zip.7zip` |
-| | Android Debug Bridge (ADB) | `Google.PlatformTools` |
-| | Git | `Git.Git` |
-| | Sysinternals Suite | `Microsoft.Sysinternals.Suite` |
-| | WinSCP | `WinSCP.WinSCP` |
-| | PowerToys | `Microsoft.PowerToys` |
-| **Browsers** | Brave Browser | `Brave.Brave` |
-| | Mozilla Firefox | `Mozilla.Firefox` |
-| | Google Chrome | `Google.Chrome` |
-| | Microsoft Edge | `Microsoft.Edge` |
-| **Development Tools** | Visual Studio Code | `Microsoft.VisualStudioCode` |
-| | Notepad++ | `Notepad++.Notepad++` |
-| | TortoiseGit | `TortoiseGit.TortoiseGit` |
-| | scrcpy | `Genymobile.scrcpy` |
-| | Windows Terminal | `Microsoft.WindowsTerminal` |
-| **Creative Tools** | GIMP | `GIMP.GIMP` |
-| | Inkscape | `Inkscape.Inkscape` |
-| | Obsidian | `Obsidian.Obsidian` |
-| **Media Tools** | FFmpeg | `Gyan.FFmpeg` |
-| | yt-dlp | `yt-dlp.yt-dlp` |
-| | VLC Media Player | `VideoLAN.VLC` |
-| | Tidal | `9NBLGGH6X7MR` (Microsoft Store) |
-| **Communication** | Skype | `Microsoft.Skype` |
-| | Telegram Desktop | `Telegram.TelegramDesktop` |
-| | Thunderbird | `Mozilla.Thunderbird` |
-| | Microsoft Teams | `Microsoft.Teams` |
-| **Security & Sync** | KeePassXC | `KeePassXCTeam.KeePassXC` |
-| | SyncTrayzor | `SyncTrayzor.SyncTrayzor` |
-| | Tailscale | `tailscale.tailscale` |
-| **Office & Productivity** | LibreOffice | `TheDocumentFoundation.LibreOffice` |
-| | Microsoft Office | `Microsoft.Office` |
-| | Foxit PDF Reader | `Foxit.FoxitReader` |
+**Windows Features:**
+- Hyper-V
+- Windows Sandbox
+- WSL with Ubuntu
 
-**Windows Features Enabled:**
-- Hyper-V (`Microsoft-Hyper-V-All`)
-- Windows Sandbox (`Containers-DisposableClientVM`)
-- Windows Subsystem for Linux with Ubuntu
-
-**PowerShell Execution:**
-
+**Direct Execution:**
 ```powershell
-# Download and execute directly from GitHub
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/clevotec/oobe/main/developer.ps1'))
-```
-
-```powershell
-# Or download first, then execute locally
-Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/clevotec/oobe/main/developer.ps1' -OutFile "$env:TEMP\developer.ps1"
 Set-ExecutionPolicy Bypass -Scope Process -Force
-& "$env:TEMP\developer.ps1"
-```
-
-```powershell
-# If you have the repository cloned locally
-cd C:\path\to\oobe
-Set-ExecutionPolicy Bypass -Scope Process -Force
-.\developer.ps1
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+$tempDir = "$env:TEMP\oobe-setup"
+New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
+@('developer.ps1', 'common.ps1', 'packages.ps1') | ForEach-Object {
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/clevotec/oobe/main/$_" -OutFile "$tempDir\$_"
+}
+& "$tempDir\developer.ps1"
 ```
 
 ---
 
-## Common Features (All Scripts)
+### 4. Chocolatey Uninstaller (`uninstall-chocolatey.ps1`)
 
-All scripts include the following configurations:
+**Purpose:** Safely removes Chocolatey package manager while preserving an inventory backup and warning about portable applications.
+
+**Target Users:** Users migrating from Chocolatey to winget
+
+**Features:**
+- Creates a backup inventory of all installed Chocolatey packages to Desktop
+- Detects portable apps that live inside the Chocolatey folder and warns before deletion
+- Cleans up environment variables (PATH, ChocolateyInstall, etc.)
+- Removes Chocolatey from both User and System PATH using Registry
+- Stops Chocolatey Agent service if running
+- Interactive confirmation before deleting portable apps
+
+**What It Does:**
+
+| Phase | Action | Description |
+|-------|--------|-------------|
+| **Phase 1** | Data Backup | Exports list of installed packages to `choco_inventory_YYYYMMDD.txt` on Desktop |
+| **Phase 2** | Portable Detection | Scans for .exe files inside Chocolatey's lib folder and warns about deletion |
+| **Phase 3** | Environment Cleanup | Removes Chocolatey paths from User/System PATH and deletes environment variables |
+| **Phase 4** | File Removal | Stops Chocolatey Agent and deletes the Chocolatey installation directory |
+
+**Standalone Execution:**
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/clevotec/oobe/main/uninstall-chocolatey.ps1'))
+```
+
+**Note:** All setup scripts automatically detect and offer to migrate from Chocolatey.
+
+---
+
+## Common Features (All Profiles)
 
 ### Windows Settings
 - **Disable Bing Search** in Start Menu
 - **Disable Game Bar Tips**
 - **Enable Dark Theme** for apps and system
 - **Enable Windows Spotlight** for desktop and lock screen
-- **Disable Search Box** on taskbar (icon only mode)
+- **Minimize Search Box** on taskbar (icon only)
 
 ### Automation
 - **Automatic Updates:** Scheduled task runs daily at 4:00 AM to update all winget packages
 - **Windows Updates:** Installs all available Windows updates using PSWindowsUpdate module
-- **Microsoft Update:** Enables Microsoft Update for drivers and other Microsoft products
+- **Chocolatey Migration:** Automatically detects and migrates from Chocolatey
 
 ### Security & Authentication
 - **Windows Hello for Business:** Enabled and configured
-- **OneDrive for Business:** Configured with Files on Demand and Known Folder Move (standard.ps1 and business.ps1)
-- **KeePassXC Browser Integration:** Automatically configures browser extensions for password management
+- **KeePassXC Browser Integration:** Automatically configures browser extensions
 
 ### Cleanup
 - Removes Personal Microsoft Teams app (conflicts with Teams for Work/School)
 
 ---
 
-## Usage Instructions
+## Package Categories
 
-### Prerequisites Check
+All packages are organized in `packages.ps1` by category:
 
-Before running any script, verify your system meets the requirements:
-
-```powershell
-# Check Windows version
-Get-ComputerInfo | Select-Object WindowsVersion, OsHardwareAbstractionLayer
-
-# Check if winget is available
-winget --version
-
-# Verify PowerShell version
-$PSVersionTable.PSVersion
-```
-
-### Running Scripts
-
-1. **Open PowerShell as Administrator**
-   - Right-click Start Menu → Windows Terminal (Admin) or PowerShell (Admin)
-
-2. **Choose your execution method** from the examples above for your target script
-
-3. **Wait for completion**
-   - The script will display progress for each installation
-   - Some packages may require user interaction
-   - The process may take 30-60 minutes depending on your internet connection
-
-4. **Restart when prompted**
-   - A restart is typically required to complete installation of Windows features and updates
-
-### Post-Installation
-
-After running the script and restarting:
-
-1. **OneDrive Sign-In** (standard.ps1 and business.ps1)
-   - Sign in to OneDrive with your organizational account
-   - Known Folder Move will automatically backup Desktop, Documents, and Pictures
-
-2. **Windows Hello Setup**
-   - Set up PIN, fingerprint, or facial recognition when prompted
-
-3. **Browser Extensions**
-   - KeePassXC extensions are pre-configured for Chrome, Edge, and Brave
-   - Firefox users: Manually install from https://addons.mozilla.org/firefox/addon/keepassxc-browser/
-
-4. **WSL Setup** (developer.ps1 only)
-   - Launch Ubuntu from Start Menu to complete initial setup
-   - Create your Linux username and password
+| Category | Available Packages |
+|----------|-------------------|
+| **Utilities** | 7-Zip, ADB, Git, Sysinternals, WinSCP, PowerToys |
+| **Browsers** | Chrome, Brave, Firefox, Edge |
+| **Communication** | Teams, Skype, Zoom, Telegram, Thunderbird |
+| **Office & Productivity** | Microsoft Office, Foxit Reader, LibreOffice, Adobe Reader, Obsidian |
+| **Development Tools** | Windows Terminal, VS Code, Notepad++, TortoiseGit, scrcpy |
+| **Creative Tools** | GIMP, Inkscape, OBS Studio |
+| **Media Tools** | VLC, FFmpeg, yt-dlp, Tidal |
+| **Security & Sync** | KeePassXC, SyncTrayzor, Tailscale |
+| **Hardware Support** | Jabra Direct |
 
 ---
 
 ## Customization
 
+### Adding New Packages
+
+Edit `packages.ps1` and add to the appropriate category:
+
+```powershell
+$script:PackageCategories = [ordered]@{
+    "Utilities" = @(
+        @{ Id = "7zip.7zip"; Name = "7-Zip"; Profiles = @("Standard", "Business", "Developer") }
+        @{ Id = "Your.PackageId"; Name = "Your App Name"; Profiles = @("Developer") }
+        # ...
+    )
+}
+```
+
+### Creating Custom Functions
+
+Add new functions to `common.ps1`:
+
+```powershell
+function Install-MyCustomApp {
+    # Your custom installation logic
+}
+```
+
 ### Modifying OneDrive Tenant
 
-To use with your organization's OneDrive, update the `$TenantGUID` variable in the script:
+Update the TenantGUID in the profile script or pass it to `Set-OneDriveForBusiness`:
 
 ```powershell
-# Find your tenant ID at: https://portal.azure.com → Azure Active Directory → Properties
-$TenantGUID = 'your-tenant-guid-here'
-```
-
-### Adding/Removing Packages
-
-To add additional packages, use the helper function:
-
-```powershell
-Install-WingetPackage -PackageId "Publisher.AppName" -Name "Friendly Name"
-```
-
-To find package IDs:
-
-```powershell
-winget search "application name"
-```
-
-### Disabling Automatic Updates
-
-To remove the automatic update scheduled task:
-
-```powershell
-Unregister-ScheduledTask -TaskName "WingetAutoUpdate" -Confirm:$false
+Set-OneDriveForBusiness -TenantGUID 'your-tenant-guid-here'
 ```
 
 ---
@@ -332,55 +321,41 @@ Unregister-ScheduledTask -TaskName "WingetAutoUpdate" -Confirm:$false
 
 ### Winget Not Found
 
-If winget is not available:
-
 ```powershell
 # Install App Installer from Microsoft Store
 Start-Process "ms-windows-store://pdp/?ProductId=9NBLGGH4NNS1"
-
-# Or download directly from GitHub
-# https://github.com/microsoft/winget-cli/releases
 ```
 
 ### Script Execution Policy Error
 
 ```powershell
-# Temporarily bypass execution policy for current session
 Set-ExecutionPolicy Bypass -Scope Process -Force
 ```
 
 ### Package Installation Failures
 
-If individual packages fail to install:
-
 ```powershell
 # Manually install failed package
 winget install --id PackageId --source winget
 
-# Update winget sources
-winget source update
-
-# Reset winget
+# Reset winget sources
 winget source reset --force
 ```
 
-### Windows Features Installation Failures
+### Windows Features Require Pro/Enterprise
 
-Some features require Windows 10/11 Pro or Enterprise:
-- Hyper-V
-- Windows Sandbox
-
-These will fail gracefully on Home editions with a warning message.
+Hyper-V and Windows Sandbox require Windows 10/11 Pro or Enterprise. The scripts will gracefully skip these on Home editions.
 
 ---
 
 ## Migration from Chocolatey
 
-These scripts replace the older Chocolatey-based versions with native winget support:
+These scripts automatically detect Chocolatey installations and offer to migrate:
 
-- **Old:** `cand.ps1` → **New:** `standard.ps1`
-- **Old:** N/A → **New:** `business.ps1`
-- **Old:** `kcrk.ps1` → **New:** `developer.ps1`
+1. **Backup:** Creates inventory of installed packages
+2. **Detect:** Warns about portable apps that will be deleted
+3. **Clean:** Removes Chocolatey paths and environment variables
+4. **Delete:** Removes Chocolatey installation directory
 
 ### Why Winget?
 
@@ -392,9 +367,19 @@ These scripts replace the older Chocolatey-based versions with native winget sup
 
 ---
 
-## Contributing
+## Quick Reference
 
-To contribute or report issues:
+| Script | Use Case | Packages | Special Features |
+|--------|----------|----------|------------------|
+| `setup.ps1` | Interactive Setup | Custom | Profile selection, package picker, feature selection |
+| `standard.ps1` | Office & Creative | 19 | OneDrive KFM, Media Tools, Creative Suite |
+| `business.ps1` | Business Productivity | 10 | Minimal, Business-focused, Quick Setup |
+| `developer.ps1` | Software Development | 34 | WSL, Hyper-V, Sandbox, Dev Tools |
+| `uninstall-chocolatey.ps1` | Chocolatey Removal | N/A | Backup, Portable Detection, Clean Uninstall |
+
+---
+
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -405,19 +390,7 @@ To contribute or report issues:
 
 ## License
 
-This project is provided as-is for use in configuring Windows workstations. Modify as needed for your organization's requirements.
-
----
-
-## Security Notice
-
-These scripts:
-- Require administrator privileges
-- Modify system registry settings
-- Install software from trusted sources (winget repositories)
-- Configure organizational policies (OneDrive, Windows Hello)
-
-**Always review scripts before execution in your environment.**
+This project is provided as-is for use in configuring Windows workstations.
 
 ---
 
@@ -425,19 +398,9 @@ These scripts:
 
 Maintained by clevotec
 
-**Previous Version:** Used Boxstarter and Chocolatey (deprecated)
-**Current Version:** Native PowerShell with winget package management
+**Previous Version:** Chocolatey-based with Boxstarter
+**Current Version:** Native PowerShell with winget and interactive setup
 
 ---
 
-## Quick Reference
-
-| Script | Use Case | Package Count | Special Features |
-|--------|----------|---------------|------------------|
-| `standard.ps1` | Office & Creative Work | 19 packages | OneDrive KFM, Media Tools, Creative Suite |
-| `business.ps1` | Business Productivity | 10 packages | Minimal, Business-focused, Quick Setup |
-| `developer.ps1` | Software Development | 34 packages | WSL, Hyper-V, Sandbox, Dev Tools |
-
----
-
-**Last Updated:** 2025-12-02
+**Last Updated:** 2025-12-18
